@@ -1,8 +1,12 @@
 {
+  "type": "module",
   "name": "apoal-live",
   "version": "1.0.0",
+  "description": "À Prendre ou à Laisser - Système connecté Banquier / Plateau",
   "main": "server.js",
-  "scripts": { "start": "node server.js" },
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "express": "^4.19.0",
     "socket.io": "^4.8.0"
