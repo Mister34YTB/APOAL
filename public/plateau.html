@@ -1,0 +1,1682 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>À prendre ou à laisser — Version 2005</title>
+<style>
+  .amount {
+  opacity: 0; /* invisible au démarrage */
+  transition: opacity 1s;
+}
+
+body {
+    margin: 0;
+    font-family: Impact, sans-serif;
+    background: url('https://imgur.com/eLekvZL.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
+}
+.main {flex:1; display:flex; justify-content:space-between; align-items:center;}
+.col {display:flex; flex-direction:column; gap:6px;  z-index: 1;}
+.amount {
+  min-width: 260px;       /* ✅ même largeur pour toutes les cases */
+  text-align: center;
+  justify-content: center;
+  padding: 12px 0;        /* ✅ hauteur uniforme */
+  box-sizing: border-box;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05em;             /* ✅ espace naturel entre valeur et € */
+
+  /* 🎨 Effet biseauté ajouté sans modifier l'esthétique d'origine */
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.6);
+  box-shadow:
+    inset 0 2px 3px rgba(255,255,255,0.7), /* lumière haut */
+    inset 0 -2px 4px rgba(0,0,0,0.4);      /* ombre bas */
+}
+.amount::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.4) 10%, transparent 40%);
+  pointer-events: none;
+}
+
+/* Valeurs et objets */
+.amount .value {
+  font-family: Impact, sans-serif;
+  font-size: 32px;
+  color: white;
+  -webkit-text-stroke: 1px black;    /* ✅ contour noir plus visible */
+  text-shadow: none;                 /* ✅ pas d’ombre sur les chiffres/objets */
+}
+
+/* Symbole € */
+.amount .euro {
+  font-family: Arial, sans-serif;
+  font-size: 32px;
+  line-height: 1;
+  color: white;
+  margin-left: 0.5em;                /* ✅ espace supplémentaire */
+  -webkit-text-stroke: 0.6px black;  /* ✅ contour fin noir */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7); /* ✅ ombre légère */
+  display: inline-block;
+  vertical-align: middle;
+}
+/* BLEUS */
+
+/* 0,01 € */
+.amount.val-0-01 {
+  background: linear-gradient(90deg, #E5FEFF 74%, #F6F8FC 100%);
+  color: #000;
+}
+
+/* String */
+.amount.val-String {
+  background: linear-gradient(90deg, #E5FEFF 62%, #F6F8FC 84%, #E5FEFF 100%);
+  color: #000;
+}
+
+/* 1 € */
+.amount.val-1 {
+  background: linear-gradient(90deg, #D1FDFF 64%, #E5FEFF 84%, #D1FDFF 100%);
+  color: #000;
+}
+
+/* Sel */
+.amount.val-sel {
+  background: linear-gradient(90deg, #D1FDFF 64%, #E5FEFF 84%, #D1FDFF 100%);
+  color: #000;
+}
+
+/* 10 € */
+.amount.val-10 {
+  background: linear-gradient(90deg, #B9FCFF 64%, #D1FDFF 84%, #B9FCFF 100%);
+  color: #000;
+}
+
+/* Fouet */
+.amount.val-fouet {
+  background: linear-gradient(90deg, #9BDBFB 69%, #B6E5FC 82%, #9BDBFB 100%);
+  color: #000;
+}
+
+/* 50 € */
+.amount.val-50 {
+  background: linear-gradient(90deg, #64C0F8 38%, #90D2FA 53%);
+  color: #fff;
+}
+
+/* 100 € */
+.amount.val-100 {
+  background: linear-gradient(90deg, #1D89FF 28%, #4FA3FF 39%, #4FA3FF 49%, #1D89FF 60%);
+  color: #fff;
+}
+
+/* 250 € */
+.amount.val-250 {
+  background: linear-gradient(90deg, #0E58FE 18%, #407AFA 30%, #407AFA 40%, #0E58FE 48%);
+  color: #fff;
+}
+
+/* 500 € */
+.amount.val-500 {
+  background: linear-gradient(90deg, #0006EA 11%, #2D32FF 20%, #2D32FF 30%, #0006EA 42%);
+  color: #fff;
+}
+
+/* 5 000 € */
+.amount.val-5000 {
+  background: linear-gradient(90deg, #0005C4 4%, #1117FF 17%, #1117FF 27%, #0005C4 38%);
+  color: #fff;
+}
+
+/* 🟡 JAUNES */
+
+/* 10 000 € */
+.amount.val-10000 {
+  background: linear-gradient(90deg, #F1EFCF 0%, #F6F5DF 28%, #F6F5DF 77%, #F1EFCF 100%);
+  color: #000;
+  -webkit-text-stroke: 1px black;
+}
+
+/* 15 000 € */
+.amount.val-15000 {
+  background: linear-gradient(90deg, #F1EFCF 0%, #F6F5DF 28%, #F6F5DF 77%, #F1EFCF 100%);
+  color: #000;
+  -webkit-text-stroke: 1px black;
+}
+
+/* 20 000 € */
+.amount.val-20000 {
+  background: linear-gradient(90deg, #F1E2CF 0%, #F3F2D5 28%, #F3F2D5 77%, #F1E2CF 100%);
+  color: #000;
+  -webkit-text-stroke: 1px black;
+}
+
+/* 25 000 € */
+.amount.val-25000 {
+  background: linear-gradient(90deg, #F3CDCD 9%, #EEEDC4 38%, #EEEDC4 73%, #F3CDCD 97%);
+  color: #000;
+  -webkit-text-stroke: 1px black;
+}
+
+/* 30 000 € */
+.amount.val-30000 {
+  background: linear-gradient(90deg, #F7C9C9 9%, #EEEDC4 35%, #EEEDC4 61%, #F7C9C9 88%);
+  color: #000;
+  -webkit-text-stroke: 1px black;
+}
+
+
+/* 🔴 ROUGES (50 000 – 500 000 €) */
+.amount.val-50000,
+.amount.val-75000,
+.amount.val-100000,
+.amount.val-250000,
+.amount.val-500000 {
+  background: linear-gradient(90deg, #C80000 8%, #C80000 35%, #DE0000 61%, #DE0000 88%);
+  color: #fff;
+  -webkit-text-stroke: 1px black;
+}
+
+.amount.joker {
+  background: linear-gradient(
+    90deg,
+    #dcae2c 0%,
+    #f1ee72 24%,
+    #dca611 55%,
+    #cf8508 72%,
+    #c5830c 88%
+  );
+  font-family: Impact, sans-serif;
+  font-weight: bold;
+  font-size: 32px;
+  color: white;
+  -webkit-text-stroke: 0.5px black;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+
+  /* ✅ mêmes dimensions que .amount */
+  min-width: 260px;
+  max-width: 260px;
+  padding: 12px 0;
+  box-sizing: border-box;
+
+  /* ✅ centrage identique */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05em;
+}
+
+.amount .star {
+  font-family: Arial, sans-serif;
+  font-size: 32px;
+  color: white;
+  margin-left: 0.3em;
+  -webkit-text-stroke: 0.6px black;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
+.controls {position:absolute; bottom:20px; left:50%; transform:translateX(-50%);}
+button {margin:5px;padding:10px 16px;font-size:14px;border:none;cursor:pointer;background:#ffcc00;font-weight:bold;}
+.flyout-left {animation:flyoutLeft 1s forwards;}
+.flyout-right {animation:flyoutRight 1s forwards;}
+@keyframes flyoutLeft {0%{transform:translateX(0);}100%{transform:translateX(-80%);} }
+@keyframes flyoutRight {0%{transform:translateX(0);}100%{transform:translateX(80%);} }
+/* Quand un montant s’envole, il disparaît complètement après l’animation */
+.flyout-left,
+.flyout-right {
+  opacity: 1;
+  transition: opacity 0.4s ease 0.6s; /* disparaît un peu après le départ */
+}
+
+/* Quand un montant s’envole, il disparaît complètement après l’animation */
+.flyout-left,
+.flyout-right {
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+
+
+.boxes {position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:12px;}
+.row {display:flex;justify-content:center;gap:8px;}
+/* Boîte style carton 3D */
+/* Style boîte */
+/* Boîte */
+/* Boîte */
+.box {
+    width: 120px;
+    height: 90px;
+    perspective: 1500px; /* augmente la profondeur 3D */
+    cursor: pointer;
+    position: relative;
+}
+/* Région sous la boîte */
+.region {
+    width: 100px;
+    background: #fff;
+    color: #000;
+    font-size: 14px;
+    font-weight: normal; /* ✅ plus de gras */
+    text-align: center;
+    padding: 4px;
+    border-radius: 3px;
+}
+/* Conteneur d’une boîte + région */
+.box-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+/* Couvercle (bleu ciel avec dégradé blanc sur les bords) */
+.lid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 20%, #ffffff 0%, #b3d9ff 40%, #66a3ff 100%);
+    /* dégradé bleu ciel + blanc sur les coins */
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    backface-visibility: hidden;
+    transform-origin: top;
+    transition: transform 0.9s;
+    border: 2px solid #003366;
+    border-radius: 4px;
+    z-index: 2;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 0 6px rgba(255,255,255,0.6);
+}
+
+
+.lid.open {
+    transform: rotateX(-160deg);
+    z-index: 1; /* reste visible un peu au-dessus */
+}
+
+/* Intérieur (fond clair) */
+.inside {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fdfdfd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: "Arial Black", sans-serif;
+    font-size: 15px;
+    color: #000;
+    border: 2px solid #003366;
+    border-radius: 4px;
+    z-index: 1;
+    opacity: 0; /* caché par défaut */
+    transition: opacity 0.4s;
+}
+/* Quand on ouvre → le montant apparaît */
+.lid.open + .inside {
+    opacity: 1;
+}
+.locked {border:3px solid gold;}
+#offerBox {position:absolute;bottom:100px;left:50%;transform:translateX(-50%);text-align:center;display:none;flex-direction:column;align-items:center;gap:10px;}
+#offerText {color:yellow;font-size:75px;opacity:0;transition: opacity 0.5s;}
+#openRegie {position:absolute;top:20px;right:20px;padding:10px;}
+
+/* Numéro uniforme dans carré blanc en bas à gauche */
+.lid .box-number {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    background: #fff;
+    color: #000;
+    font-weight: bold;
+    font-size: 22px;
+    border: 2px solid #000;
+    width: 40px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.region.candidate {
+    background: gold;
+    color: black;
+    font-weight: bold;
+    border: 2px solid #000;
+}
+
+#backgroundOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: transparent;
+  z-index: 0; /* ✅ derrière tout le reste */
+  pointer-events: none;
+  transition: background 1s ease;
+}
+
+.amount {
+  position: relative;
+  /* --- ton code existant --- */
+  min-width: 260px;
+  text-align: center;
+  justify-content: center;
+  padding: 12px 0;
+  box-sizing: border-box;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.05em;
+
+  /* --- biseau pur, sans reflet --- */
+  border: 1px solid #003366; /* contour fin */
+  box-shadow:
+    inset 0 6px 0 rgba(255, 255, 255, 0.7),  /* bord supérieur clair */
+    inset 0 -6px 0 rgba(0, 0, 0, 0.5),       /* bord inférieur foncé */
+    inset 4px 0 0 rgba(255, 255, 255, 0.5),  /* bord gauche clair */
+    inset -4px 0 0 rgba(0, 0, 0, 0.4);       /* bord droit foncé */
+}
+
+/* désactivation des reflets éventuels */
+.amount::before,
+.amount::after {
+  content: none !important;
+}
+
+
+/* Alignement spécifique des textes selon la couleur / valeur */
+
+
+
+/* 🎯 Disparition uniquement du texte (valeur + €), pas du rectangle */
+.amount.flyout-done {
+  opacity: 1 !important;            /* le rectangle reste visible */
+  visibility: visible !important;
+}
+
+.amount.flyout-done .value,
+.amount.flyout-done .euro {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  visibility: hidden;
+}
+
+/* ⚙️ Alignement automatique en finale selon la position visuelle */
+.final-left {
+  justify-content: flex-end !important;
+  text-align: right !important;
+  padding-right: 40px !important;
+}
+
+.final-right {
+  justify-content: flex-start !important;
+  text-align: left !important;
+  padding-left: 40px !important;
+}
+
+</style>
+</head>
+<body>
+<div class="main">
+  <div class="col" id="leftCol"></div>
+  <div class="col" id="rightCol"></div>
+<div id="backgroundOverlay"></div>
+
+</div>
+<div class="controls" style="display:flex; gap:90px; justify-content:center; align-items:center;">
+  <div>
+    <button id="restart">Nouvelle partie</button>
+    <button id="drawJoker">Tirage Joker</button>
+  </div>
+  <div>
+    <button id="openRegie">Régie</button>
+  </div>
+</div>
+<div class="boxes" id="boxes"></div>
+<div id="offerBox"><div id="offerText">0</div></div>
+
+<div id="jokerPopup" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+background:#222;color:#fff;padding:30px;font-size:40px;border:3px solid gold;border-radius:15px;text-align:center;z-index:9999;">
+  <div id="jokerNumber">1</div>
+</div>
+<div id="finalGainBox" style="
+  display:none;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  background: linear-gradient(135deg, orange, rgba(241, 238, 6, 0.959));
+  color:#ffffff;
+  font-size:80px;
+  font-weight:bold;
+  padding:30px 100px;
+  border-radius:25px;
+  text-align:center;
+  z-index:9999;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
+  -webkit-text-stroke:2px #000;
+  transition: opacity 1s;
+"></div>
+<!-- Effets sonores -->
+<audio id="flyoutSound" src="C:/Users/BboyF/Downloads/Whoosh_-_Sommes_Rouges.wav"></audio>
+<audio id="redSound" src="C:/Users/BboyF/Downloads/apoal-bo-de-lemission-debris-des-gains-2004-2006.mp3"></audio>
+<audio id="phoneSound" src="C:/Users/BboyF/Downloads/apoal-telephone-du-banquier-qui-appelle-2015-2020-version-longue.mp3"></audio>
+<audio id="bankerMusic" src="g:/Régie Fort boyard/Epreuve/jean-michel-bernard-banque-musique-de-a-prendre-ou-a-laisser_tOa2PXFT.mp3" loop></audio>
+<audio id="drumRoll" src="C:/Users/BboyF/Music/apoal-bo-roulement-de-tambour-2004-2020.wav" loop></audio>
+<audio id="boxOpenSound" src="c:/Users/BboyF/Music/SONS APOAL/BoxOpen.wav"></audio>
+<audio id="finalGainJingle" src="C:/Users/BboyF/Downloads/apoal-bo-de-lemission-total-des-gains-offre-accepte-2004-2006.mp3"></audio>
+
+
+
+<!-- 20 musiques personnalisées -->
+<audio id="music1" src="C:/Users/BboyF/Music/Nappe19.wav" loop></audio>
+<audio id="music2" src="C:/Users/BboyF/Desktop/MUSIQUE APOAL/Nappe Banque.wav" loop></audio>
+<audio id="music3" src="C:/Users/BboyF/Desktop/MUSIQUE APOAL/Nappe fin.wav"></audio>
+<audio id="music4" src="C:/Users/BboyF/Desktop/MUSIQUE APOAL/jean-michel-bernard-nappexplic-musique-de-a-prendre-ou-a-laisser.wav" loop></audio>
+<audio id="music5" src="c:/Users/BboyF/Music/apoal-bo-de-lemission-nappe-suite-2004-2015.wav"></audio>
+<audio id="music6" src="C:/Users/BboyF/Downloads/jean-michel-bernard-gen-fin-musique-de-a-prendre-ou-a-laisser.mp3"></audio>
+<audio id="music7" src="g:/Régie Fort boyard/Epreuve/dschinghis-khan-moskau-starparade-14061979_XBbzBS02.mp3"></audio>
+<audio id="music8" src="g:/Régie Fort boyard/Epreuve/la-petite-culotte-la-goffa-lolita-1_HcgqpMJJ.mp3"></audio>
+<audio id="music9" src="g:/Régie Fort boyard/Epreuve/les-oies-sauvages_hj508y87.mp3"></audio>
+<audio id="music10" src="g:/Régie Fort boyard/Epreuve/hawaiian-roller-coaster-ride-from-lilo-stitch_mWaSpuc8.mp3"></audio>
+<audio id="music11" src="g:/Régie Fort boyard/Epreuve/lady-gaga-bloody-mary-tik-tok-remix-speed-up-wednesday-addams-dance-scene-lo_JZAIAjeo.mp3"></audio>
+<audio id="music12" src="C:/Users/BboyF/Music/Musique ambiance APOAL/little less.mp3"></audio>
+<audio id="music13" src="c:/Users/BboyF/Desktop/MUSIQUE APOAL/war-adagio.wav"></audio>
+<audio id="music14" src="c:/Users/BboyF/Desktop/MUSIQUE APOAL/A time for us.wav"></audio>
+<audio id="music15" src="c:/Users/BboyF/Desktop/MUSIQUE APOAL/adagio-pour-cordes-op-11a.mp3"></audio>
+<audio id="music16" src="C:/Users/BboyF/Downloads/titans.mp3"></audio>
+<audio id="music17" src="g:/Régie Fort boyard/Epreuve/Vangelis - Conquest of paradise.mp3"></audio>
+<audio id="music18" src="c:/Users/BboyF/Desktop/MUSIQUE APOAL/hans-zimmer-and-lisa-gerrard-sorrow.mp3"></audio>
+<audio id="music19" src="c:/Users/BboyF/Desktop/MUSIQUE APOAL/la-valse-damelie-version-orchestre.mp3"></audio>
+<audio id="music20" src="C:/Users/BboyF/Desktop/MUSIQUE APOAL/Le dernier des Mohicans.wav"></audio>
+<audio id="music21" src="g:/Régie Fort boyard/Epreuve/rock-that-body_TsLPgAgP.mp3"></audio>
+<audio id="music22" src="g:/Régie Fort boyard/Epreuve/pearl-harbor-and-then-i-kissed-him_agoWuk5t.mp3"></audio>
+<audio id="music23" src="C:/Users/BboyF/Desktop/Apoal_Sinistrose-1.wav"></audio>
+<audio id="music24" src="g:/Régie Fort boyard/Epreuve/troy_UHi9B3sa.mp3" loop></audio>
+<audio id="music25" src="g:/Régie Fort boyard/Epreuve/survivor-eye-of-the-tiger-lyrics_lUSFK1r1.mp3" ></audio>
+<audio id="music26" src="g:/Régie Fort boyard/Epreuve/ciel_Y52a6tfM.mp3" ></audio>
+<audio id="music27" src="g:/Régie Fort boyard/Epreuve/clip-video-aqui-besiers-joandadenis-labatpatrice-alonzojb-vietrid-warfiel_wVcPb7xi.mp3" ></audio>
+<audio id="music28" src="g:/Régie Fort boyard/Epreuve/speciale-1-million-avec-gad-elmaleh-patrick-timsit-prime-1-integral-a-prendr_dAgUuFFd.mp3" ></audio>
+<audio id="music29" src="g:/Régie Fort boyard/Epreuve/Bruno Coulais - Norbu (Cordes) (1).mp3" ></audio>
+<audio id="music30" src="g:/Régie Fort boyard/Epreuve/The Promise (1).mp3" ></audio>
+<audio id="music31" src="g:/Régie Fort boyard/Epreuve/the-clock-1_SjQu8Mq2.mp3" ></audio>
+<audio id="music32" src="C:/Users/BboyF/Desktop/MUSIQUE APOAL/le-mepris-contempt-theme-de-camille.wav" ></audio>
+<audio id="music33" src="g:/Régie Fort boyard/Epreuve/eternal-alexander_gSk0kSq9.mp3" ></audio>
+
+
+
+
+
+
+
+
+
+
+<script>
+const LEFT_VALUES=[0.01,"Casquette",1,"Stylo",10,"Clou",50,100,250,500,5000];
+const RIGHT_VALUES=[10000,15000,20000,25000,30000,50000,75000,100000,250000,500000];
+const REGIONS = [
+  "Alsace", "Aquitaine", "Auvergne", "Basse Normande", "Bourgogne", "Bretagne",
+  "Centre", "Champagne-Ardenne", "Corse", "Franche-Comté", "Haute Normande",
+  "Île de France","Languedoc-Roussillon", "Limousin", "Lorraine", "Midi-Pyrénées",
+  "Nord-pas-de-Calais", "Pays de la Loire", "Picardie", "Poitou-Charentes",
+  "PACA", "Rhône-Alpes",
+];
+let jokerValue=null,lockedBox=null,boxAssignments=[],boxesOpened=0;
+
+const sound=document.getElementById('flyoutSound');
+const redSound=document.getElementById('redSound');
+const phoneSound=document.getElementById('phoneSound');
+const bankerMusic=document.getElementById('bankerMusic');
+const drumRoll=document.getElementById('drumRoll');
+const boxOpenSound=document.getElementById('boxOpenSound');
+const offerBox=document.getElementById('offerBox');
+const offerText=document.getElementById('offerText');
+let offerInterval=null,regieWindow=null,offerClicked=false;
+
+window.fadeOut = function(audio, duration = 2000) {
+    let vol = audio.volume;
+    const step = vol / (duration / 100);
+    const fade = setInterval(() => {
+        if (vol > 0.05) {
+            vol -= step;
+            audio.volume = Math.max(vol, 0);
+        } else {
+            clearInterval(fade);
+            audio.pause();
+            audio.currentTime = 0;
+            audio.volume = 1;
+        }
+    }, 100);
+}
+
+window.fadeIn = function(audio, duration = 2000) {
+    audio.volume = 0;
+    audio.currentTime = 0;
+    audio.play();
+    let vol = 0;
+    const step = 1 / (duration / 100);
+    const fade = setInterval(() => {
+        if (vol < 1) {
+            vol += step;
+            audio.volume = Math.min(vol, 1);
+        } else {
+            clearInterval(fade);
+        }
+    }, 100);
+}
+
+
+// Toutes les musiques
+const musicTracks=[
+  {id:'bankerMusic', name:'Banquier'},
+  {id:'music28', name:'générique'},
+  {id:'music1', name:'Nappe19'},
+  {id:'music2', name:'Nappe Banque'},
+  {id:'music3', name:'Nappe Fin'},
+  {id:'music4', name:'Nappexclic'},
+  {id:'music5', name:'NappeSuite'},
+  {id:'music6', name:'GenFin'},
+  {id:'music7', name:'Moskau'},
+  {id:'music8', name:'La Goffa lolita'},
+  {id:'music9', name:'Les Oies sauvages'},
+  {id:'music25', name:'eye of the tiger'},
+  {id:'music26', name:'Ciel'},
+  {id:'music27', name:'Aqui es besiers'},
+  {id:'music10', name:'RollerCoaster'},
+  {id:'music11', name:'BloodMarry'},
+  {id:'music12', name:'Little Less'},
+  {id:'music22', name:'PearlHarbor'},
+  {id:'music13', name:'War adagio'},
+  {id:'music30', name:'Promise'},
+  {id:'music31', name:'ThClock'},
+  {id:'music32', name:'Mepris'},
+  {id:'music23', name:'Piano'},
+  {id:'music14', name:'ATFU'},
+  {id:'music29', name:'Corde'},
+  {id:'music15', name:'Adagio'},
+  {id:'music16', name:'Titan'},
+  {id:'music33', name:'Alexander'},
+  {id:'music24', name:'Troy'},
+  {id:'music17', name:'COP'},
+  {id:'music18', name:'Sorrow'},
+  {id:'music19', name:'Amelie'},
+  {id:'music20', name:'Mohicans'},
+  {id:'music21', name:'RockYourBody'},
+  {id:'drumRoll', name:'Tambour'}
+];
+
+function formatDisplay(x){if(typeof x==="string")return x;if(x===0.01)return "0,01";return x.toLocaleString('fr-FR');}
+function createAmountElement(val,type){const div=document.createElement('div');div.className='amount '+type;div.textContent=(typeof val==="number")?formatDisplay(val)+" €":val;div.dataset.value=val;return div;}
+function createJokerElement(text="JOKER ★"){const div=document.createElement('div');div.className='amount joker';div.textContent=text;div.dataset.value='joker';return div;}
+function shuffle(array){for(let i=array.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[array[i],array[j]]=[array[j],array[i]];}return array;}
+
+function initScale(){jokerValue=null;boxesOpened=0;renderScale();renderBoxes();resetOffer();}
+function renderScale(){
+  const leftCol=document.getElementById('leftCol');const rightCol=document.getElementById('rightCol');
+  leftCol.innerHTML='';rightCol.innerHTML='';
+  LEFT_VALUES.forEach(v=>leftCol.appendChild(createAmountElement(v,'low')));
+  let values=[...RIGHT_VALUES];
+  if(jokerValue!==null && ![10000,20000,30000,50000,100000].includes(jokerValue)) values.push(jokerValue);
+  values.sort((a,b)=>(typeof a==="number"?a:0)-(typeof b==="number"?b:0));
+  values.forEach(v=>{
+    if(v===jokerValue && ![10000,20000,30000,50000,100000].includes(v)) rightCol.appendChild(createJokerElement(formatDisplay(v)+' € ★'));
+    else if(typeof v==='number' && v>=10000 && v<=30000) rightCol.appendChild(createAmountElement(v,'mid'));
+    else rightCol.appendChild(createAmountElement(v,'high'));
+  });
+  if(jokerValue===null) rightCol.appendChild(createJokerElement());
+}
+/* ============================
+   🎯 Alignement Finale 6
+   ============================ */
+function renderFinal6Scale() {
+  const leftCol = document.getElementById('leftCol');
+  const rightCol = document.getElementById('rightCol');
+
+  const remainingElements = [...document.querySelectorAll('.amount')]
+    .filter(el => !el.classList.contains('flyout-left') && !el.classList.contains('flyout-right'));
+
+  remainingElements.sort((a, b) => {
+    const valA = (a.dataset.value === 'joker') ? jokerValue : parseFloat(a.dataset.value) || -1;
+    const valB = (b.dataset.value === 'joker') ? jokerValue : parseFloat(b.dataset.value) || -1;
+    return valA - valB;
+  });
+
+  leftCol.innerHTML = '';
+  rightCol.innerHTML = '';
+
+  // ✅ Gérer les 3 à gauche
+  remainingElements.slice(0, 3).forEach(el => {
+    el.style.fontSize = '50px';
+    el.style.minWidth = '260px';
+    el.style.maxWidth = '260px';
+    el.style.padding = '10px 80px';
+
+    const val = parseFloat(el.dataset.value);
+    const isBlue = !isNaN(val) && val < 10000; // petits montants
+    const isYellowOrRed = !isNaN(val) && val >= 10000;
+
+    // 🟡/🔴 à gauche → texte à droite
+    // 🔵 à gauche → texte à droite aussi
+    el.style.justifyContent = 'flex-end';
+    el.style.textAlign = 'right';
+    el.style.paddingRight = '40px';
+    el.style.paddingLeft = '0';
+
+    leftCol.appendChild(el);
+  });
+
+  // ✅ Gérer les 3 à droite
+  remainingElements.slice(3, 6).forEach(el => {
+    el.style.fontSize = '50px';
+    el.style.minWidth = '260px';
+    el.style.maxWidth = '260px';
+    el.style.padding = '10px 80px';
+
+    const val = parseFloat(el.dataset.value);
+    const isBlue = !isNaN(val) && val < 10000;
+    const isYellowOrRed = !isNaN(val) && val >= 10000;
+
+    // 🔵 à droite → texte à gauche
+    // 🟡/🔴 à droite → texte à gauche
+    el.style.justifyContent = 'flex-start';
+    el.style.textAlign = 'left';
+    el.style.paddingLeft = '40px';
+    el.style.paddingRight = '0';
+
+    rightCol.appendChild(el);
+  });
+}
+
+
+function createAmountElement(val, type) {
+  const div = document.createElement('div');
+  div.className = 'amount ' + type;
+  div.dataset.value = val;
+
+  // ✅ appliquer la bonne classe CSS en fonction de la valeur
+  switch (val) {
+    case 0.01: div.classList.add('val-0-01'); break;
+    case "Casquette": div.classList.add('val-String'); break;
+    case 1: div.classList.add('val-1'); break;
+    case "Stylo": div.classList.add('val-sel'); break;
+    case 10: div.classList.add('val-10'); break;
+    case "Clou": div.classList.add('val-fouet'); break;
+    case 50: div.classList.add('val-50'); break;
+    case 100: div.classList.add('val-100'); break;
+    case 250: div.classList.add('val-250'); break;
+    case 500: div.classList.add('val-500'); break;
+    case 5000: div.classList.add('val-5000'); break;
+    case 10000: div.classList.add('val-10000'); break;
+    case 15000: div.classList.add('val-15000'); break;
+    case 20000: div.classList.add('val-20000'); break;
+    case 25000: div.classList.add('val-25000'); break;
+    case 30000: div.classList.add('val-30000'); break;
+    case 50000: div.classList.add('val-50000'); break;
+    case 75000: div.classList.add('val-75000'); break;
+    case 100000: div.classList.add('val-100000'); break;
+    case 250000: div.classList.add('val-250000'); break;
+    case 500000: div.classList.add('val-500000'); break;
+    default:
+      if (typeof val === "number") div.classList.add('high');
+      break;
+  }
+
+  // ✅ contenu affiché
+  if (typeof val === "number") {
+    div.innerHTML = `<span class="value">${formatDisplay(val)}</span><span class="euro">€</span>`;
+  } else {
+    div.innerHTML = `<span class="value">${val}</span>`;
+  }
+
+  // Alignement de base selon la valeur
+if (typeof val === "number") {
+  if (val < 10000) {
+    // 💙 petits montants (bleus) → texte à droite
+    div.style.justifyContent = "flex-end";
+    div.style.textAlign = "right";
+    div.style.paddingRight = "40px";
+  } else {
+    // 💛🟥 gros montants (jaunes / rouges) → texte à gauche
+    div.style.justifyContent = "flex-start";
+    div.style.textAlign = "left";
+    div.style.paddingLeft = "40px";
+  }
+}
+
+
+  return div;
+}
+
+
+
+
+/* ============================
+   🎯 Alignement Finale 2
+   ============================ */
+function renderFinal2Scale() {
+  const leftCol = document.getElementById('leftCol');
+  const rightCol = document.getElementById('rightCol');
+
+  const remainingElements = [...document.querySelectorAll('.amount')]
+    .filter(el => !el.classList.contains('flyout-left') && !el.classList.contains('flyout-right'));
+
+  if (remainingElements.length !== 2) return;
+
+  remainingElements.sort((a, b) => {
+    const valA = (a.dataset.value === 'joker') ? jokerValue : parseFloat(a.dataset.value);
+    const valB = (b.dataset.value === 'joker') ? jokerValue : parseFloat(b.dataset.value);
+    return valA - valB;
+  });
+
+  leftCol.innerHTML = '';
+  rightCol.innerHTML = '';
+
+  const [leftEl, rightEl] = remainingElements;
+
+  // 💙 gauche → texte à droite
+  leftEl.style.width = leftEl.style.minWidth = leftEl.style.maxWidth = '400px';
+  leftEl.style.justifyContent = 'flex-end';
+  leftEl.style.textAlign = 'right';
+  leftEl.style.paddingRight = '60px';
+  leftEl.querySelectorAll('.value, .euro, .star').forEach(s => s.style.fontSize = '80px');
+  leftCol.appendChild(leftEl);
+
+  // ❤️ droite → texte à gauche
+  rightEl.style.width = rightEl.style.minWidth = rightEl.style.maxWidth = '400px';
+  rightEl.style.justifyContent = 'flex-start';
+  rightEl.style.textAlign = 'left';
+  rightEl.style.paddingLeft = '60px';
+  rightEl.querySelectorAll('.value, .euro, .star').forEach(s => s.style.fontSize = '80px');
+  rightCol.appendChild(rightEl);
+}
+
+
+function drawJoker() {
+    // Créer le pop-up au centre
+    const popup = document.createElement('div');
+    popup.style.position = 'fixed';
+    popup.style.top = '50%';
+    popup.style.left = '50%';
+    popup.style.transform = 'translate(-50%,-50%)';
+    popup.style.background = '#222';
+    popup.style.color = 'yellow';
+    popup.style.fontSize = '50px';
+    popup.style.padding = '30px';
+    popup.style.border = '3px solid gold';
+    popup.style.zIndex = 9999;
+    popup.style.textAlign = 'center';
+    document.body.appendChild(popup);
+
+    let interval, finalNumber;
+
+    // Faire défiler les numéros rapidement
+    interval = setInterval(() => {
+        finalNumber = Math.floor(Math.random() * 22) + 1;
+        popup.textContent = finalNumber;
+    }, 100); // changement toutes les 100ms
+
+    // Après 2 secondes, arrêter le tirage
+    setTimeout(() => {
+        clearInterval(interval);
+        popup.textContent = finalNumber;
+
+        // Mettre à jour le joker dans l'échelle
+        updateJokerValue(finalNumber);
+
+        // Supprimer le pop-up après 2 secondes
+        setTimeout(() => {
+            document.body.removeChild(popup);
+        }, 2000);
+    }, 2000);
+}
+
+function updateJokerValue(number) {
+    const value = number * 10000;
+    jokerValue = value;
+
+    const rightCol = document.getElementById('rightCol');
+    let jokerDiv = [...rightCol.children].find(c => c.classList.contains('joker'));
+
+    if (jokerDiv) {
+        jokerDiv.innerHTML = `
+            <span class="value">${formatDisplay(value)}</span>
+            <span class="euro">€</span>
+            <span class="star">★</span>
+        `;
+        jokerDiv.dataset.value = value;
+    } else {
+        // Si jamais pas trouvé, on le recrée
+        jokerDiv = document.createElement('div');
+        jokerDiv.className = 'amount joker';
+        jokerDiv.dataset.value = value;
+        jokerDiv.innerHTML = `
+            <span class="value">${formatDisplay(value)}</span>
+            <span class="euro">€</span>
+            <span class="star">★</span>
+        `;
+        rightCol.appendChild(jokerDiv);
+    }
+
+    // ✅ S’assurer qu’il garde la largeur fixe
+    jokerDiv.style.minWidth = "260px";
+    jokerDiv.style.maxWidth = "260px";
+
+    // Réorganiser tous les éléments du rightCol
+    const elements = [...rightCol.children];
+    elements.sort((a,b) => {
+        const valA = (a.dataset.value === "joker") ? jokerValue : parseFloat(a.dataset.value) || 0;
+        const valB = (b.dataset.value === "joker") ? jokerValue : parseFloat(b.dataset.value) || 0;
+        return valA - valB;
+    });
+
+    rightCol.innerHTML = '';
+    elements.forEach(el => rightCol.appendChild(el));
+}
+
+
+
+
+
+function renderBoxes() {
+  const boxesContainer = document.getElementById('boxes');
+  boxesContainer.innerHTML = '';
+
+  const rows = [document.createElement('div'),
+                document.createElement('div'),
+                document.createElement('div'),
+                document.createElement('div')];
+
+  rows.forEach(r => {
+    r.className = 'row';
+    boxesContainer.appendChild(r);
+  });
+
+  // Attribution aléatoire des numéros
+  let numbers = Array.from({length: 22}, (_, i) => i + 1);
+  shuffle(numbers);
+
+  // Attribution aléatoire des valeurs
+  let allValues = [...LEFT_VALUES, ...RIGHT_VALUES];
+  if (jokerValue !== null && ![10000,20000,30000,50000,100000].includes(jokerValue)) 
+      allValues.push('joker');
+  if (!allValues.includes('joker')) allValues.push('joker');
+  shuffle(allValues);
+  boxAssignments = allValues.slice(0,22);
+  window.boxAssignments = boxAssignments;
+
+  for (let i = 0; i < 22; i++) {
+    const boxContainer = document.createElement('div');
+    boxContainer.className = 'box-container';
+
+    const box = document.createElement('div');
+    box.className = 'box';
+
+    const lid = document.createElement('div');
+    lid.className = 'lid';
+
+   const boxNumber = numbers[i]; // le numéro affiché sur la boîte
+const value = boxAssignments[i];
+box.dataset.value = value; // ✅ on garde la valeur dans data-value
+
+// ⚡ Sauvegarde dans une map numéro → valeur
+if (!window.boxMap) window.boxMap = {};
+window.boxMap[boxNumber] = value;
+
+// --- ton code actuel pour afficher ---
+const numberDiv = document.createElement('div');
+numberDiv.className = 'box-number';
+numberDiv.textContent = boxNumber;
+lid.appendChild(numberDiv);
+
+const inside = document.createElement('div');
+inside.className = 'inside';
+if (value === 'joker') inside.innerHTML = `<span style="color:red;font-size:20px;">JOKER</span>`;
+else if (typeof value === 'string') inside.innerHTML = `<span>${value}</span>`;
+else inside.innerHTML = `<span style="font-size:27px;">${formatDisplay(value)}</span><span>€uros</span>`;
+
+box.appendChild(lid);
+box.appendChild(inside);
+
+
+    // Gestion ouverture de boîte
+   box.addEventListener('click', () => {
+  if (box.classList.contains('locked') || lid.classList.contains('open')) return;
+  lid.classList.add('open');
+  boxesOpened++;
+  boxOpenSound.currentTime = 0;
+  boxOpenSound.play();
+
+  setTimeout(() => {
+    const num = parseInt(box.querySelector('.box-number').textContent);
+
+    // ✅ on ne passe plus dataset.value directement
+    eliminateFromScale(null, num);
+
+    if (!box.classList.contains('locked')) {
+      const region = boxContainer.querySelector('.region');
+      if (region) region.remove();
+      setTimeout(() => box.remove(), 2000);
+    }
+  }, 500);
+
+  window.postMessage({ type: 'stopDrum' }, '*');
+});
+
+
+
+
+    // Clic droit pour désigner la région du candidat
+box.addEventListener('contextmenu', e => {
+  e.preventDefault();
+
+  // Supprimer ancien marquage
+  if (lockedBox) {
+    const oldRegion = lockedBox.parentNode.querySelector('.region');
+    if (oldRegion) oldRegion.classList.remove('candidate');
+  }
+
+  // Marquer uniquement la région associée à cette boîte
+  const newRegion = box.parentNode.querySelector('.region');
+  if (newRegion) newRegion.classList.add('candidate');
+
+  // On mémorise la boîte cliquée pour pouvoir enlever son marquage plus tard
+  lockedBox = box;
+});
+
+
+    // Ajout région FIXE (dans l’ordre du tableau)
+    const region = document.createElement('div');
+    region.className = 'region';
+    region.textContent = REGIONS[i];
+
+    boxContainer.appendChild(box);
+    boxContainer.appendChild(region);
+
+    // Placement
+    if (i < 6) rows[0].appendChild(boxContainer);
+    else if (i < 12) rows[1].appendChild(boxContainer);
+    else if (i < 18) rows[2].appendChild(boxContainer);
+    else rows[3].appendChild(boxContainer);
+  }
+}
+
+
+
+function swapBoxes(num1, num2) {
+  const allBoxes = document.querySelectorAll('.box-container');
+  const box1 = allBoxes[num1 - 1];
+  const box2 = allBoxes[num2 - 1];
+
+  if (box1 && box2) {
+    const parent1 = box1.parentNode;
+    const parent2 = box2.parentNode;
+    const next1 = box1.nextSibling;
+    const next2 = box2.nextSibling;
+
+    parent1.insertBefore(box2, next1);
+    parent2.insertBefore(box1, next2);
+  }
+}
+
+
+function eliminateFromScale(value = null, boxNum = null) {
+  const cols = [...document.querySelectorAll('.amount')];
+  let target = null;
+
+  // ✅ priorité au numéro de boîte
+  if (boxNum && window.boxMap && window.boxMap[boxNum] !== undefined) {
+    value = window.boxMap[boxNum];
+  }
+
+  if (value === 'joker') {
+    target = cols.find(c => c.classList.contains('joker'));
+  } else {
+    target = cols.find(c => c.dataset.value == value);
+  }
+
+  if (target) {
+    if (target.classList.contains('high')) {
+      redSound.currentTime = 0;
+      redSound.play();
+    } else {
+      sound.currentTime = 0;
+      sound.play();
+    }
+    if (target.parentElement.id === 'leftCol') target.classList.add('flyout-left');
+    else target.classList.add('flyout-right');
+  }
+
+  // faire disparaître le texte après l’animation
+setTimeout(() => {
+  target.classList.add('flyout-done');
+}, 900); // durée égale à l’animation flyout (1s environ)
+
+
+  const remainingAmounts = [...document.querySelectorAll('.amount')]
+    .filter(c => !c.classList.contains('flyout-left') && !c.classList.contains('flyout-right'));
+
+  if (remainingAmounts.length === 6) {
+    renderFinal6Scale();
+  } else if (remainingAmounts.length === 2) {
+    renderFinal2Scale();
+  }
+}
+
+
+
+
+// Régie
+document.getElementById('openRegie').addEventListener('click', () => {
+  if (!regieWindow || regieWindow.closed) {
+    regieWindow = window.open('', 'regie', 'width=1200,height=800,resizable=yes');
+    regieWindow.document.body.innerHTML = `
+      <h2>Régie Banque</h2>
+      <input type="text" id="offerInput" placeholder="Montant offre ou échange"/>
+      <button id="showOffer">Afficher sur le jeu</button>
+      <button id="resetOffer">Réinitialiser l'offre</button>
+      <h3>Musique</h3>
+      <div id="musicDiv"></div>
+      <h3>Boîtes du jeu</h3>
+      <div id="regieBoxes"></div>
+      <h3>Gestion des boîtes</h3>
+      <button id="unlockBox">Déverrouiller la boîte</button>
+      <button id="downloadBoxes">Télécharger boîtes</button>
+      <h3>Échelle des gains</h3>
+      <button id="revealScale">Révéler l’échelle</button>
+      <h3>Tirage de la boîte</h3>
+      <button id="drawCandidateBox">Tirer la boîte du candidat</button>
+      <div id="candidateBoxDisplay" style="margin-top:10px; font-size:20px; font-weight:bold;"></div>
+      <h3>Échanger deux boîtes</h3>
+      <input type="number" id="exchangeBox1" min="1" max="22" placeholder="Boîte A">
+      <input type="number" id="exchangeBox2" min="1" max="22" placeholder="Boîte B">
+      <button id="exchangeBtn">Échanger</button>
+      <h3>Jeux de lumières</h3>
+      <button id="btnDim">Assombrir</button>
+      <button id="btnNormal">Normal</button>
+      <button id="btnRed">Rouge</button>
+      <button id="btnBlue">Bleu foncé</button>
+      <button id="btnPink">Rose</button>
+    `;
+
+    regieWindow.eval(`
+      const musicTracks = ${JSON.stringify(musicTracks)};
+      const musicDiv = document.getElementById('musicDiv');
+
+      // Création des boutons de musique
+      musicTracks.forEach(track => {
+        const btn = document.createElement('button');
+        btn.textContent = track.name;
+        btn.addEventListener('click', () => {
+          const audio = window.opener.document.getElementById(track.id);
+
+          if(track.id !== 'drumRoll'){
+            musicTracks.forEach(t => {
+              if(t.id !== 'drumRoll' && t.id !== track.id){
+                const other = window.opener.document.getElementById(t.id);
+                if(!other.paused){
+                  window.opener.fadeOut(other);
+                }
+              }
+            });
+            window.opener.fadeIn(audio);
+          } else {
+            audio.currentTime = 0;
+            audio.play();
+          }
+        });
+        musicDiv.appendChild(btn);
+      });
+
+      // Échanger deux boîtes
+      document.getElementById('exchangeBtn').addEventListener('click', () => {
+        const box1 = parseInt(document.getElementById('exchangeBox1').value);
+        const box2 = parseInt(document.getElementById('exchangeBox2').value);
+
+        if (!isNaN(box1) && !isNaN(box2) && box1 >= 1 && box1 <= 22 && box2 >= 1 && box2 <= 22 && box1 !== box2) {
+          window.opener.postMessage({ type: 'exchangeBoxes', value: [box1, box2] }, '*');
+        } else {
+          alert("Choisis deux numéros de boîtes différents entre 1 et 22 !");
+        }
+      });
+
+      // Jeux de lumières
+      document.getElementById('btnDim').addEventListener('click', () => {
+        window.opener.postMessage({ type: 'setDim', value: true }, '*');
+      });
+      document.getElementById('btnNormal').addEventListener('click', () => {
+        window.opener.postMessage({ type: 'resetLight' }, '*');
+      });
+      document.getElementById('btnRed').addEventListener('click', () => {
+        window.opener.postMessage({ type: 'setLight', value: 'red' }, '*');
+      });
+      document.getElementById('btnBlue').addEventListener('click', () => {
+        window.opener.postMessage({ type: 'setLight', value: 'darkblue' }, '*');
+      });
+      document.getElementById('btnPink').addEventListener('click', () => {
+        window.opener.postMessage({ type: 'setLight', value: 'deeppink' }, '*');
+      });
+
+      // Création des boîtes dans la régie (par région)
+const regieBoxesDiv = document.getElementById('regieBoxes');
+const regions = ${JSON.stringify(REGIONS)}; // on réutilise ton tableau
+
+regions.forEach((region, i) => {
+  const div = document.createElement('div');
+  div.innerHTML = '<button class="regieBoxBtn" data-box="'+(i+1)+'">'+region+'</button><div id="regieBoxContent'+(i+1)+'" style="margin-top:2px;"></div>';
+  regieBoxesDiv.appendChild(div);
+});
+
+
+      // Affichage du contenu des boîtes (par RÉGION possédée)
+document.querySelectorAll('.regieBoxBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    // i+1 stocké dans data-box = index de la RÉGION (1..22)
+    const regionIndex = parseInt(btn.dataset.box, 10);
+
+    // On récupère le container de cette région côté jeu
+    const containers = window.opener.document.querySelectorAll('.box-container');
+    const container = containers[regionIndex - 1];
+
+    const contentDiv = document.getElementById('regieBoxContent' + regionIndex);
+
+    if (!container) {
+      contentDiv.innerHTML = '<span style="color:#888">Indisponible</span>';
+      return;
+    }
+
+    // La boîte actuellement POSÉE devant cette région
+    const boxEl = container.querySelector('.box');
+
+    // Si la boîte a été ouverte/retirée
+    if (!boxEl) {
+      contentDiv.innerHTML = '<span style="color:#888">— OUVERTE —</span>';
+      return;
+    }
+
+    const raw = boxEl.dataset.value; // 'joker' | 'Durex' | '5000' | '0.01' etc.
+
+    // Rendu propre (en réutilisant le formatteur du jeu si dispo)
+    const fmt = (n) => {
+      if (window.opener.formatDisplay) return window.opener.formatDisplay(n);
+      // fallback simple
+      if (n === 0.01) return '0,01';
+      return n.toLocaleString('fr-FR');
+    };
+
+    if (raw === 'joker') {
+      contentDiv.innerHTML = '<span style="color:red;font-weight:bold;">JOKER</span>';
+    } else if (isNaN(raw)) {
+      // objets type "Durex", "Boule", "Pneu", etc.
+      contentDiv.innerHTML = '<span style="color:black;">' + raw + '</span>';
+    } else {
+      const n = parseFloat(raw);
+      contentDiv.innerHTML = '<span style="color:black;">' + fmt(n) + ' €</span>';
+    }
+
+    // Suspense
+    window.opener.postMessage({ type: 'playDrum' }, '*');
+  });
+});
+
+
+      // Révéler l’échelle
+      document.getElementById('revealScale').addEventListener('click', () => {
+        const amounts = window.opener.document.querySelectorAll('.amount');
+        amounts.forEach(el => {
+          el.style.opacity = 1;
+        });
+      });
+
+      // Télécharger les boîtes en .txt (par région)
+      document.getElementById('downloadBoxes').addEventListener('click', () => {
+        const containers = window.opener.document.querySelectorAll('.box-container');
+        let values = [];
+
+        containers.forEach(container => {
+          const region = container.querySelector('.region').textContent.trim();
+          const box = container.querySelector('.box');
+          const val = box.dataset.value;
+
+          let display;
+          if (val === 'joker') {
+            display = 'JOKER';
+          } else if (isNaN(val)) {
+            display = val;
+          } else {
+            display = parseInt(val).toLocaleString('fr-FR') + ' €';
+          }
+
+          values.push(region + ": " + display);
+        });
+
+        const blob = new Blob([values.join('\\n')], {type: 'text/plain'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'boites.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+
+      // Afficher l'offre sur le jeu
+      document.getElementById('showOffer').addEventListener('click', () => {
+        const val = document.getElementById('offerInput').value;
+        if(val) window.opener.postMessage({type:'showOffer', value: val}, '*');
+      });
+
+      // Réinitialiser l'offre
+      document.getElementById('resetOffer').addEventListener('click', () => {
+        window.opener.postMessage({type:'resetOffer'}, '*');
+      });
+
+      // Déverrouiller la boîte
+      document.getElementById('unlockBox').addEventListener('click', () => {
+        window.opener.postMessage({type:'unlockBox'}, '*');
+      });
+
+      // Tirage de la boîte du candidat
+      document.getElementById('drawCandidateBox').addEventListener('click', () => {
+        let interval;
+        let current = 1;
+        let cycles = 0;
+        const maxCycles = 40;
+        let chosen = Math.floor(Math.random() * 22) + 1;
+
+        interval = setInterval(() => {
+          document.getElementById('candidateBoxDisplay').textContent = "Boîte du candidat : " + current;
+          window.opener.postMessage({ type: 'highlightCandidateBox', value: current }, '*');
+
+          current++;
+          if (current > 22) current = 1;
+          cycles++;
+
+          if (cycles > maxCycles) {
+            clearInterval(interval);
+            document.getElementById('candidateBoxDisplay').textContent = "Boîte du candidat : " + chosen;
+            window.opener.postMessage({ type: 'setCandidateBox', value: chosen }, '*');
+          }
+        }, 100);
+      });
+    `);
+  } else regieWindow.focus();
+
+  regieWindow.document.body.insertAdjacentHTML('beforeend', `
+    <h3>Afficher le gain final</h3>
+    <input type="text" id="finalGainInput" placeholder="Montant du gain"/>
+    <button id="showFinalGain">Afficher le gain</button>
+    <button id="hideFinalGainBtn">Cacher le gain</button>
+    <h3>Volume général</h3>
+    <input type="range" id="volumeControl" min="0" max="100" value="100"/>
+    <span id="volumeValue">100%</span>
+  `);
+
+  regieWindow.eval(`
+    document.getElementById('showFinalGain').addEventListener('click', () => {
+      const val = document.getElementById('finalGainInput').value;
+      if(val){
+        window.opener.postMessage({type:'showFinalGain', value: val}, '*');
+      }
+    });
+
+    document.getElementById('hideFinalGainBtn').addEventListener('click', () => {
+      window.opener.postMessage({type:'hideFinalGain'}, '*');
+    });
+
+    const volumeControl = document.getElementById('volumeControl');
+    const volumeValue = document.getElementById('volumeValue');
+
+    volumeControl.addEventListener('input', () => {
+      const volume = volumeControl.value / 100;
+      volumeValue.textContent = volumeControl.value + "%";
+
+      const sounds = [
+        'flyoutSound','redSound','phoneSound','bankerMusic','drumRoll','boxOpenSound',
+        'finalGainJingle','music1','music2','music3','music4','music5','music6','music7',
+        'music8','music9','music10','music11','music12','music13','music14','music15',
+        'music16','music17','music18','music19','music20','music21','music22','music23',
+        'music24','music25','music26','music27','music28','music29','music30','music31',
+        'music32','music33',
+      ];
+
+      sounds.forEach(id => {
+        const audio = window.opener.document.getElementById(id);
+        if(audio) audio.volume = volume;
+      });
+    });
+  `);
+});
+
+
+
+
+
+function showOffer(value){
+  offerText.textContent=value;
+  offerBox.style.display='flex';
+  let fade=true;
+  offerInterval=setInterval(()=>{offerText.style.opacity=fade?0.4:0.8;fade=!fade;},500);
+}
+function resetOffer(){clearInterval(offerInterval);offerText.style.opacity=0;offerBox.style.display='none';bankerMusic.pause();offerClicked=false;}
+
+let phonePlayed = false; // ✅ variable globale
+
+window.addEventListener('message', (event) => {
+    switch(event.data.type) {
+        case 'playDrum':
+            drumRoll.currentTime = 0;
+            drumRoll.play();
+            break;
+
+        case 'stopDrum':
+            drumRoll.pause();
+            break;
+
+        case 'showOffer':
+            if (!phonePlayed) {
+                phoneSound.currentTime = 0;
+                phoneSound.play();
+                setTimeout(() => {
+                    phoneSound.pause();
+                    phoneSound.currentTime = 0;
+                }, 5000);
+                phonePlayed = true;
+            } else {
+                showOffer(event.data.value);
+                phonePlayed = false;
+            }
+            break;
+
+        case 'resetOffer':
+            resetOffer();
+            phonePlayed = false;
+            break;
+
+        case 'unlockBox':
+            if (lockedBox) {
+                lockedBox.classList.remove('locked');
+                lockedBox = null;
+            }
+            break;
+
+      case 'downloadBoxes': {
+    const allBoxContainers = document.querySelectorAll('.box-container');
+    let values = [];
+
+    allBoxContainers.forEach(container => {
+        const region = container.querySelector('.region').textContent.trim();
+        const box = container.querySelector('.box');
+        const val = box.dataset.value; // ⚡ on récupère la valeur stockée
+
+        let display;
+        if (val === 'joker') {
+            display = 'JOKER';
+        } else if (isNaN(val)) {
+            display = val; // ex: Clou, Mouchoir
+        } else {
+            display = parseInt(val).toLocaleString('fr-FR') + " €";
+        }
+
+        values.push(`${region}: ${display}`);
+    });
+
+    const blob = new Blob([values.join('\n')], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'boites.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    break;
+}
+
+        case 'highlightCandidateBox':
+            document.querySelectorAll('.box').forEach(b => b.style.outline = '');
+            const highlightBox = document.querySelectorAll('.box')[event.data.value - 1];
+            if (highlightBox) highlightBox.style.outline = "3px solid red";
+            break;
+
+        case 'setCandidateBox':
+            document.querySelectorAll('.box').forEach(b => b.style.outline = '');
+            const chosenBoxNum = event.data.value;
+            const allBoxes = document.querySelectorAll('.box');
+            const chosenBox = allBoxes[chosenBoxNum - 1];
+            if (chosenBox) {
+                chosenBox.classList.add('locked');
+                chosenBox.style.border = "5px solid yellow";
+                chosenBox.style.boxShadow = "0 0 20px yellow";
+                lockedBox = chosenBox;
+            }
+            break;
+
+      case 'exchangeBoxes': {
+  const [numA, numB] = event.data.value;
+  console.log("Échange demandé :", numA, numB);
+
+  // Récupérer les vraies boîtes (pas les containers)
+  const allBoxes = document.querySelectorAll('.box');
+  let b1 = null, b2 = null;
+
+  allBoxes.forEach(b => {
+    const num = parseInt(b.querySelector('.box-number').textContent);
+    if (num === numA) b1 = b;
+    if (num === numB) b2 = b;
+  });
+
+  if (b1 && b2) {
+    // --- Sauvegarder
+    const num1 = b1.querySelector('.box-number').textContent;
+    const num2 = b2.querySelector('.box-number').textContent;
+
+    const val1 = b1.dataset.value;
+    const val2 = b2.dataset.value;
+
+    const inside1 = b1.querySelector('.inside').innerHTML;
+    const inside2 = b2.querySelector('.inside').innerHTML;
+
+    // --- Échanger numéro
+    b1.querySelector('.box-number').textContent = num2;
+    b2.querySelector('.box-number').textContent = num1;
+
+    // --- Échanger valeur et contenu
+    b1.dataset.value = val2;
+    b2.dataset.value = val1;
+    b1.querySelector('.inside').innerHTML = inside2;
+    b2.querySelector('.inside').innerHTML = inside1;
+
+    // --- Reconstruire boxMap après l’échange
+    window.boxMap = {};
+    document.querySelectorAll('.box').forEach(b => {
+      const num = parseInt(b.querySelector('.box-number').textContent, 10);
+      window.boxMap[num] = b.dataset.value;
+    });
+
+    console.log(`Échange terminé entre ${numA} et ${numB}`);
+  } else {
+    console.warn("Impossible de trouver les boîtes", numA, numB);
+  }
+  break;
+}
+
+
+
+
+
+
+        /* 🎛️ NOUVELLES COMMANDES LUMIÈRE 🎛️ */
+        case 'setDim':
+            toggleDim(event.data.value);
+            break;
+
+        case 'resetLight':
+            resetLight();
+            break;
+
+        case 'setLight':
+            if (event.data.value === 'red') setLight('#ff0000', 0.5);
+            if (event.data.value === 'darkblue') setLight('#00008b', 0.5);
+            if (event.data.value === 'deeppink') setLight('#ff1493', 0.5);
+            break;
+    }
+});
+
+
+
+
+document.getElementById('restart').addEventListener('click',initScale);
+document.getElementById('drawJoker').addEventListener('click',drawJoker);
+
+initScale();
+window.addEventListener('message', (event) => {
+  if(event.data.type === 'showFinalGain'){
+    const finalBox = document.getElementById('finalGainBox');
+    const finalJingle = document.getElementById('finalGainJingle');
+    finalBox.textContent = event.data.value + "";
+
+    // Styles texte avec contour noir
+    finalBox.style.color = '#ffffff';
+    finalBox.style.webkitTextStroke = '1px #000000';
+    finalBox.style.opacity = 0;
+    finalBox.style.display = 'block';
+
+    // Jingle
+    finalJingle.currentTime = 0;
+    finalJingle.play();
+
+    // Fondu
+    setTimeout(() => { finalBox.style.opacity = 1; }, 50);
+  }
+
+  if(event.data.type === 'hideFinalGain'){
+    const finalBox = document.getElementById('finalGainBox');
+    finalBox.style.opacity = 0;
+    setTimeout(() => { finalBox.style.display = 'none'; }, 1000);
+  }
+});
+
+function rebuildBoxMap() {
+  window.boxMap = {};
+  document.querySelectorAll('.box').forEach(b => {
+    const num = parseInt(b.querySelector('.box-number').textContent, 10);
+    window.boxMap[num] = b.dataset.value;
+  });
+}
+
+
+
+function renderFinal6Boxes() {
+    const boxes = document.querySelectorAll('.box:not(.opened)');
+    if (boxes.length !== 6) return;
+
+    // On récupère le conteneur principal des boîtes
+    const boxesContainer = document.getElementById('boxesContainer'); 
+    boxesContainer.innerHTML = '';
+
+    // ✅ On recrée une seule ligne horizontale
+    const row = document.createElement('div');
+    row.style.display = 'flex';
+    row.style.justifyContent = 'center';
+    row.style.alignItems = 'center';
+    row.style.gap = '20px';
+    row.style.width = '100%';
+
+    boxes.forEach(box => {
+        box.style.width = '100px';   // taille standard
+        box.style.height = '90px';  // un peu plus haut
+        row.appendChild(box);
+    });
+
+    boxesContainer.appendChild(row);
+}
+
+function setLight(color, alpha = 0.6) {
+  const overlay = document.getElementById('backgroundOverlay');
+  overlay.style.background = `${color}${alphaToHex(alpha)}`;
+}
+
+function resetLight() {
+  const overlay = document.getElementById('backgroundOverlay');
+  overlay.style.background = 'transparent';
+}
+
+// Convertit alpha (0–1) en hexadécimal (#RRGGBBAA)
+function alphaToHex(alpha) {
+  return Math.round(alpha * 255).toString(16).padStart(2, '0');
+}
+
+// Effet assombrissement progressif (comme un variateur)
+function toggleDim(on) {
+  const overlay = document.getElementById('backgroundOverlay');
+  if (on) {
+    overlay.style.background = '#00000099'; // noir semi-transparent
+  } else {
+    overlay.style.background = 'transparent';
+  }
+}
+/* ===============================
+   🔌 Connexion BANQUIER ↔ PLATEAU
+   =============================== */
+const socket = io();
+
+// Quand le banquier appelle
+socket.on("jouerSonnerie", () => {
+  console.log("📞 Le banquier appelle !");
+  const phone = document.getElementById("phoneSound");
+  phone.currentTime = 0;
+  phone.play();
+});
+
+// Quand le banquier ou plateau arrête
+socket.on("arreterSonnerie", () => {
+  const phone = document.getElementById("phoneSound");
+  phone.pause();
+  phone.currentTime = 0;
+});
+
+// Bouton STOP côté plateau
+const stopButton = document.createElement("button");
+stopButton.textContent = "⛔ STOP SONNERIE";
+stopButton.style.position = "fixed";
+stopButton.style.bottom = "20px";
+stopButton.style.right = "20px";
+stopButton.style.background = "red";
+stopButton.style.color = "white";
+stopButton.style.fontSize = "18px";
+stopButton.style.padding = "10px 20px";
+stopButton.style.border = "none";
+stopButton.style.borderRadius = "10px";
+stopButton.style.cursor = "pointer";
+document.body.appendChild(stopButton);
+
+stopButton.addEventListener("click", () => {
+  const phone = document.getElementById("phoneSound");
+  phone.pause();
+  phone.currentTime = 0;
+  socket.emit("arreterSonnerie");
+});
+
+</script>
+
+</body>
+</html>

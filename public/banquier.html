@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Banquier</title>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body style="background:#111;color:#fff;text-align:center;font-family:sans-serif;">
+  <h1>👔 Interface Banquier</h1>
+  <button id="btnCall" style="font-size:2em;padding:20px 40px;background:gold;border:none;border-radius:10px;">📞 Appeler le plateau</button>
+
+  <script>
+    const socket = io();
+    document.getElementById("btnCall").addEventListener("click", () => {
+      socket.emit("banquierAppelle");
+    });
+
+    socket.on("arreterSonnerie", () => {
+      alert("🛑 Le plateau a arrêté la sonnerie !");
+    });
+  </script>
+</body>
+</html>
